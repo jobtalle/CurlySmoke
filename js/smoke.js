@@ -9,7 +9,7 @@ import {RenderableSmoke} from "./renderable/renderableSmoke.js";
 import {SmokeParticles} from "./smokeParticles.js";
 
 export class Smoke {
-    static #CLEAR_COLOR = new Color("#74a7b6");
+    static #CLEAR_COLOR = new Color("#3e536b");
 
     #camera = new Camera(new Vector2(0, .5));
     #cameraController = new CameraController(this.#camera);
@@ -26,8 +26,7 @@ export class Smoke {
         UniformBlocks.GLOBALS.setProjection(this.#camera.projection);
 
         gl.clearColor(Smoke.#CLEAR_COLOR.r, Smoke.#CLEAR_COLOR.g, Smoke.#CLEAR_COLOR.b, 1);
-        gl.blendFuncSeparate(gl.ONE_MINUS_SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
-        gl.blendEquation(gl.FUNC_ADD);
+        gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
         gl.viewport(0, 0, glCanvas.width, glCanvas.height);
     }
 

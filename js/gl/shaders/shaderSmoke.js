@@ -4,11 +4,11 @@ import {glslGlobals, UniformBlockGlobals} from "../uniforms/uniformBlockGlobals.
 export class ShaderSmoke extends Shader {
     // language=GLSL
     static #SHADER_NOISE = `
-        float hash(float n) {
+        float hash(const float n) {
             return fract(sin(n) * 43758.5453);
         }
         
-        float noise(vec3 x) {
+        float noise(const vec3 x) {
             vec3 p = floor(x);
             vec3 f = fract(x);
         
@@ -26,19 +26,47 @@ export class ShaderSmoke extends Shader {
     // language=GLSL
     static #SHADER_VERTEX = glslGlobals + `
         layout(location = 0) in vec3 position;
+        layout(location = 1) in float life;
+        layout(location = 2) in float scale;
+        layout(location = 3) in float noiseOffset;
+        layout(location = 4) in float rotation;
+        
+        out float vY;
+        out float vAlpha;
+        out mat2 vRotation;
         
         void main() {
+            float life2 = life * life;
+            float angle = (life2 + 4.) * rotation;
+            float angleCos = cos(angle);
+            float angleSin = sin(angle);
+            
             gl_Position = vp * vec4(position, 1.);
-            gl_PointSize = viewport.y * .2 * projection[1][1] / gl_Position.w;
+            gl_PointSize = viewport.y * scale * projection[1][1] / gl_Position.w;
+            
+            vY = noiseOffset - position.y;
+            vAlpha = 4. * (life2 - life2 * life2);
+            vRotation = mat2(angleCos, -angleSin, angleSin, angleCos);
         }
         `;
 
     // language=GLSL
     static #SHADER_FRAGMENT = ShaderSmoke.#SHADER_NOISE + `
+        in float vY;
+        in float vAlpha;
+        in mat2 vRotation;
+        
         out vec4 color;
         
+        float noiseOctaves(const vec3 x) {
+            return noise(x) * .5 + noise(x * 2.) * .3 + noise(x * 3.) * .2;
+        }
+        
         void main() {
-            color = vec4(vec3(noise(vec3(gl_PointCoord.xy * 5., 1.))), .5);
+            float alpha = max(0., 1. - length(gl_PointCoord.xy - .5) * 2.) * vAlpha;
+            float noiseValue = .5 * .5 * noiseOctaves(vec3(vec2(abs(gl_PointCoord.x - .5), gl_PointCoord.y - .5) * vRotation * 5., vY));
+            
+            color = vec4(vec3(1.), 2. * noiseValue * alpha);
         }
         `;
 

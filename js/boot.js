@@ -1,4 +1,4 @@
-export function boot(smoke, fps = 15) {
+export function boot(smoke, fps = 20) {
     const updateRate = 1 / fps;
     let lastTime = performance.now();
     let updateTime = 0;
