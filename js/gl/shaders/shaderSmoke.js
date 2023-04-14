@@ -16,10 +16,10 @@ export class ShaderSmoke extends Shader {
             
             float n = p.x + p.y * 57. + 113. * p.z;
             
-            return mix(mix(mix(hash(n + 0.), hash(n + 1.),f.x), 
-                mix(hash(n + 57.), hash(n + 58.),f.x),f.y),
-                mix(mix(hash(n + 113.), hash(n + 114.),f.x),
-                mix(hash(n + 170.), hash(n + 171.),f.x),f.y),f.z);
+            return .5 + .5 * mix(mix(mix(hash(n + 0.), hash(n + 1.), f.x), 
+                mix(hash(n + 57.), hash(n + 58.), f.x), f.y),
+                mix(mix(hash(n + 113.), hash(n + 114.), f.x),
+                mix(hash(n + 170.), hash(n + 171.), f.x), f.y), f.z);
         }
         `;
 
@@ -46,15 +46,15 @@ export class ShaderSmoke extends Shader {
             vec3 offsetDirection = noiseOffset.xyz;
             vec3 offsetRight = normalize(vec3(-offsetDirection.z, 0., offsetDirection.x));
             vec3 offsetUp = cross(offsetDirection, offsetRight);
-            float scaleLife = scale * (1. - life2);
+            float scaleLife = scale * (1. - life * .8);
             
             gl_Position = vp * vec4(position, 1.);
             gl_PointSize = viewport.y * scaleLife * projection[1][1] / gl_Position.w;
 
             vAlpha = 4. * (life3 - life3 * life3);
-            vMagnitude = scaleLife * 18.;
+            vMagnitude = 1.5;
             vRotation = mat2(angleCos, -angleSin, angleSin, angleCos);
-            vOffsetDistance = noiseOffset.z - position.y * 2.;
+            vOffsetDistance = noiseOffset.z - position.y;
             vOffset = mat3(
                 offsetDirection,
                 offsetRight,
@@ -73,7 +73,10 @@ export class ShaderSmoke extends Shader {
         out vec4 color;
 
         float noiseOctaves(const vec3 x) {
-            return noise(x) * .7 + noise(x * -2.) * .3 + noise(x * 3.) * .2;
+            float n1 = noise(x);
+            float n2 = noise(x * -2.81);
+            
+            return n1 * n1 * n2;
         }
 
         void main() {
@@ -82,9 +85,9 @@ export class ShaderSmoke extends Shader {
                 vec2(abs(delta.x), delta.y) * vRotation * vMagnitude,
                 vOffsetDistance);
             float alpha = max(0., 1. - length(delta)) * vAlpha;
-            float noiseValue = .5 * .5 * noiseOctaves(noiseCoordinate);
+            float noiseValue = noiseOctaves(noiseCoordinate);
 
-            color = vec4(mix(vec3(1.), vec3(.2), gl_PointCoord.y), 5. * noiseValue * alpha * (1. - gl_PointCoord.y * gl_PointCoord.y));
+            color = vec4(mix(vec3(1.), vec3(.05), gl_PointCoord.y), 2. * noiseValue * alpha * (1. - gl_PointCoord.y * gl_PointCoord.y));
         }
     `;
 

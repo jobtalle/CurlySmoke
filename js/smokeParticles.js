@@ -29,8 +29,8 @@ class SmokeParticle {
     update() {
         this.position.add(this.velocity);
 
-        this.velocity.y += .005 * this.scale;
-        this.velocity.x -= .01 * this.scale * (1 - this.life) * (1 - this.life);
+        this.velocity.y += .004 * this.scale;
+        this.velocity.x -= .013 * this.scale * (1 - this.life) * (1 - this.life);
         this.velocity.multiply(.9);
 
         return (this.life -= this.decay) < 0;
@@ -46,13 +46,16 @@ export class SmokeParticles {
     constructor(renderable, frequency = 2) {
         this.#renderable = renderable;
         this.#frequency = frequency;
+
+        for (let i = 0; i < 70; ++i)
+            this.update();
     }
 
     spawn() {
         if (this.#particles.length === RenderableSmoke.CAPACITY)
             return;
 
-        this.#particles.push(new SmokeParticle(
+        this.#particles.unshift(new SmokeParticle(
             new Vector3(),
             new Vector3(
                 Math.random() - .5,
@@ -61,7 +64,7 @@ export class SmokeParticles {
                 .006 + Math.random() * .007,
                 .2 + .2 * Math.random(),
                 Math.random() * 128,
-                1 + .8 * Math.random()
+                1.5 + .8 * Math.random()
             ));
     }
 
