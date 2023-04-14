@@ -28,53 +28,65 @@ export class ShaderSmoke extends Shader {
         layout(location = 0) in vec3 position;
         layout(location = 1) in float life;
         layout(location = 2) in float scale;
-        layout(location = 3) in float noiseOffset;
+        layout(location = 3) in vec4 noiseOffset;
         layout(location = 4) in float rotation;
         
-        out float vY;
         out float vAlpha;
-        out float vScale;
+        out float vMagnitude;
         out mat2 vRotation;
+        out mat3 vOffset;
+        out float vOffsetDistance;
         
         void main() {
             float life2 = life * life;
+            float life3 = life2 * life;
             float angle = (life2 + 4.) * rotation;
             float angleCos = cos(angle);
             float angleSin = sin(angle);
-            
-            vScale = scale * (1. - life2);
+            vec3 offsetDirection = noiseOffset.xyz;
+            vec3 offsetRight = normalize(vec3(-offsetDirection.z, 0., offsetDirection.x));
+            vec3 offsetUp = cross(offsetDirection, offsetRight);
+            float scaleLife = scale * (1. - life2);
             
             gl_Position = vp * vec4(position, 1.);
-            gl_PointSize = viewport.y * vScale * projection[1][1] / gl_Position.w;
-            
-            vY = noiseOffset - position.y;
-            vAlpha = 4. * (life2 - life2 * life2);
+            gl_PointSize = viewport.y * scaleLife * projection[1][1] / gl_Position.w;
+
+            vAlpha = 4. * (life3 - life3 * life3);
+            vMagnitude = scaleLife * 18.;
             vRotation = mat2(angleCos, -angleSin, angleSin, angleCos);
+            vOffsetDistance = noiseOffset.z - position.y * 2.;
+            vOffset = mat3(
+                offsetDirection,
+                offsetRight,
+                offsetUp);
         }
         `;
 
     // language=GLSL
     static #SHADER_FRAGMENT = ShaderSmoke.#SHADER_NOISE + `
-        in float vY;
         in float vAlpha;
-        in float vScale;
+        in float vMagnitude;
         in mat2 vRotation;
-        
+        in mat3 vOffset;
+        in float vOffsetDistance;
+
         out vec4 color;
-        
+
         float noiseOctaves(const vec3 x) {
-            return noise(x) * .5 + noise(x * 2.) * .3 + noise(x * 3.) * .2;
+            return noise(x) * .7 + noise(x * -2.) * .3 + noise(x * 3.) * .2;
         }
-        
+
         void main() {
-            float alpha = max(0., 1. - length(gl_PointCoord.xy - .5) * 2.) * vAlpha;
-            float noiseValue = .5 * .5 * noiseOctaves(vec3(
-                vScale * vec2(abs(gl_PointCoord.x - .5), gl_PointCoord.y - .5) * vRotation * 20.,
-                vY));
-            
-            color = vec4(vec3(1.), 2. * noiseValue * alpha);
+            vec2 delta = 2. * gl_PointCoord.xy - 1.;
+            vec3 noiseCoordinate = vOffset * vec3(
+                vec2(abs(delta.x), delta.y) * vRotation * vMagnitude,
+                vOffsetDistance);
+            float alpha = max(0., 1. - length(delta)) * vAlpha;
+            float noiseValue = .5 * .5 * noiseOctaves(noiseCoordinate);
+
+            color = vec4(mix(vec3(1.), vec3(.2), gl_PointCoord.y), 5. * noiseValue * alpha * (1. - gl_PointCoord.y * gl_PointCoord.y));
         }
-        `;
+    `;
 
     constructor() {
         super(ShaderSmoke.#SHADER_VERTEX, ShaderSmoke.#SHADER_FRAGMENT);

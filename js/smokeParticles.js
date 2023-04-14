@@ -6,6 +6,7 @@ class SmokeParticle {
     velocity;
     decay;
     scale;
+    noiseOffsetDirection = new Vector3().randomDirection();
     noiseOffset;
     rotation;
     life = 1;
@@ -22,7 +23,7 @@ class SmokeParticle {
         this.decay = decay;
         this.scale = scale;
         this.noiseOffset = noiseOffset;
-        this.rotation = rotation;
+        this.rotation = rotation / scale;
     }
 
     update() {
@@ -42,7 +43,7 @@ export class SmokeParticles {
     #countdown = 1;
     #frequency;
 
-    constructor(renderable, frequency = 3) {
+    constructor(renderable, frequency = 2) {
         this.#renderable = renderable;
         this.#frequency = frequency;
     }
@@ -57,10 +58,10 @@ export class SmokeParticles {
                 Math.random() - .5,
                 Math.random() - .5,
                 0).multiply(Math.random() * .03),
-                .005 + Math.random() * .01,
-                .2 + .15 * Math.random(),
+                .006 + Math.random() * .007,
+                .2 + .2 * Math.random(),
                 Math.random() * 128,
-                4 + 4 * Math.random()
+                1 + .8 * Math.random()
             ));
     }
 

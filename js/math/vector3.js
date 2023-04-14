@@ -239,4 +239,15 @@ export class Vector3 {
     get length() {
         return Math.sqrt(this.dot(this));
     }
+
+    randomDirection() {
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(Math.random() * 2 - 1) - Math.PI / 2;
+
+        this.x = Math.cos(theta) * Math.cos(phi);
+        this.y = Math.sin(theta) * Math.cos(phi);
+        this.z = Math.sin(phi);
+
+        return this;
+    }
 }

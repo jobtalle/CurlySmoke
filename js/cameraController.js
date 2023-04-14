@@ -11,7 +11,7 @@ export class CameraController {
     #pivot = new Vector3();
     #direction = new Vector3();
     #angle = Math.PI * .25;
-    #pitch = Math.PI * .25;
+    #pitch = Math.PI * .125;
     #zoom;
     #updated = false;
 
