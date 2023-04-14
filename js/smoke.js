@@ -26,7 +26,8 @@ export class Smoke {
         UniformBlocks.GLOBALS.setProjection(this.#camera.projection);
 
         gl.clearColor(Smoke.#CLEAR_COLOR.r, Smoke.#CLEAR_COLOR.g, Smoke.#CLEAR_COLOR.b, 1);
-        gl.disable(gl.DEPTH_TEST);
+        gl.blendFuncSeparate(gl.ONE_MINUS_SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
+        gl.blendEquation(gl.FUNC_ADD);
         gl.viewport(0, 0, glCanvas.width, glCanvas.height);
     }
 
@@ -74,6 +75,11 @@ export class Smoke {
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         this.#grid.render();
+
+        gl.enable(gl.BLEND);
+
         this.#smoke.render();
+
+        gl.disable(gl.BLEND);
     }
 }
