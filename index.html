@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Curly smoke</title>
+</head>
+<body>
+<div id="wrapper">
+    <canvas id="renderer" width="500" height="600"></canvas>
+</div>
+<script type="module">
+    import {boot} from "./js/boot.js";
+    import {Smoke} from "./js/smoke.js";
+
+    const smoke = new Smoke();
+
+    boot(smoke);
+</script>
+</body>
+</html>
