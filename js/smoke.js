@@ -4,11 +4,12 @@ import {Camera} from "./camera.js";
 import {UniformBlocks} from "./gl/uniforms/uniformBlocks.js";
 import {CameraController} from "./cameraController.js";
 import {RenderableGrid} from "./renderable/renderableGrid.js";
+import {Vector2} from "./math/vector2.js";
 
 export class Smoke {
     static #CLEAR_COLOR = new Color("#74a7b6");
 
-    #camera = new Camera();
+    #camera = new Camera(new Vector2(0, .5));
     #cameraController = new CameraController(this.#camera);
     #grid = new RenderableGrid();
 

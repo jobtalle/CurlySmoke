@@ -10,8 +10,8 @@ export class CameraController {
     #from = new Vector3();
     #pivot = new Vector3();
     #direction = new Vector3();
-    #angle = 0;
-    #pitch = 0;
+    #angle = Math.PI * .25;
+    #pitch = Math.PI * .25;
     #zoom;
     #updated = false;
 
@@ -91,7 +91,7 @@ export class CameraController {
         const dy = y - this.#anchor.y;
 
         this.#angle -= dx * this.#sensitivity;
-        this.#pitch += dy * this.#sensitivity;
+        this.#pitch = Math.min(Math.PI * .35, Math.max(Math.PI * -.35, this.#pitch + dy * this.#sensitivity));
 
         this.#anchor.x = x;
         this.#anchor.y = y;
