@@ -1,4 +1,5 @@
 import {Vector3} from "./math/vector3.js";
+import {RenderableSmoke} from "./renderable/renderableSmoke.js";
 
 class SmokeParticle {
     position;
@@ -34,6 +35,9 @@ export class SmokeParticles {
     }
 
     spawn() {
+        if (this.#particles.length === RenderableSmoke.CAPACITY)
+            return;
+
         this.#particles.push(new SmokeParticle(new Vector3(), new Vector3(0, .1, 0)));
     }
 
