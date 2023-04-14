@@ -64,7 +64,7 @@ export class SmokeParticles {
                 .004 + Math.random() * .005,
                 .2 + .3 * Math.random(),
                 Math.random() * 128,
-                1.5 + .8 * Math.random()
+                1.8 + 1.2 * Math.random()
             ));
     }
 
