@@ -110,7 +110,7 @@ export class CameraController {
      * Scroll up
      */
     scrollUp() {
-        this.#zoom *= .9;
+        this.#zoom = Math.max(.5, this.#zoom * .9);
 
         this.moved();
     }
@@ -119,7 +119,7 @@ export class CameraController {
      * Scroll down
      */
     scrollDown() {
-        this.#zoom *= 1.1;
+        this.#zoom = Math.min(20, this.#zoom * 1.1);
 
         this.moved();
     }
