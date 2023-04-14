@@ -28,8 +28,9 @@ class SmokeParticle {
     update() {
         this.position.add(this.velocity);
 
-        this.velocity.y += .005;
-        this.velocity.multiply(.85);
+        this.velocity.y += .005 * this.scale;
+        this.velocity.x -= .01 * this.scale * (1 - this.life) * (1 - this.life);
+        this.velocity.multiply(.9);
 
         return (this.life -= this.decay) < 0;
     }
@@ -55,9 +56,9 @@ export class SmokeParticles {
             new Vector3(
                 Math.random() - .5,
                 Math.random() - .5,
-                0).multiply(Math.random() * .05),
+                0).multiply(Math.random() * .03),
                 .005 + Math.random() * .01,
-                .1 + .2 * Math.random(),
+                .2 + .15 * Math.random(),
                 Math.random() * 128,
                 4 + 4 * Math.random()
             ));

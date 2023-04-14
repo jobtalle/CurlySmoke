@@ -33,6 +33,7 @@ export class ShaderSmoke extends Shader {
         
         out float vY;
         out float vAlpha;
+        out float vScale;
         out mat2 vRotation;
         
         void main() {
@@ -41,8 +42,10 @@ export class ShaderSmoke extends Shader {
             float angleCos = cos(angle);
             float angleSin = sin(angle);
             
+            vScale = scale * (1. - life2);
+            
             gl_Position = vp * vec4(position, 1.);
-            gl_PointSize = viewport.y * scale * projection[1][1] / gl_Position.w;
+            gl_PointSize = viewport.y * vScale * projection[1][1] / gl_Position.w;
             
             vY = noiseOffset - position.y;
             vAlpha = 4. * (life2 - life2 * life2);
@@ -54,6 +57,7 @@ export class ShaderSmoke extends Shader {
     static #SHADER_FRAGMENT = ShaderSmoke.#SHADER_NOISE + `
         in float vY;
         in float vAlpha;
+        in float vScale;
         in mat2 vRotation;
         
         out vec4 color;
@@ -64,7 +68,9 @@ export class ShaderSmoke extends Shader {
         
         void main() {
             float alpha = max(0., 1. - length(gl_PointCoord.xy - .5) * 2.) * vAlpha;
-            float noiseValue = .5 * .5 * noiseOctaves(vec3(vec2(abs(gl_PointCoord.x - .5), gl_PointCoord.y - .5) * vRotation * 5., vY));
+            float noiseValue = .5 * .5 * noiseOctaves(vec3(
+                vScale * vec2(abs(gl_PointCoord.x - .5), gl_PointCoord.y - .5) * vRotation * 20.,
+                vY));
             
             color = vec4(vec3(1.), 2. * noiseValue * alpha);
         }
