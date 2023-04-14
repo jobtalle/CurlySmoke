@@ -3,7 +3,7 @@ import {Vector2} from "./math/vector2.js";
 
 export class Camera {
     static #Z_NEAR = .01;
-    static #Z_FAR = 20;
+    static #Z_FAR = 50;
 
     #projection = new Matrix4();
     #shift;

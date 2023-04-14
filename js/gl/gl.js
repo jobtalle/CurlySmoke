@@ -1,7 +1,7 @@
 export const glCanvas = document.getElementById("renderer");
 export const gl = glCanvas.getContext("webgl2", {
     stencil: false,
-    antialias: false,
+    antialias: true,
     desynchronized: false,
     powerPreference: "high-performance",
     preserveDrawingBuffer: true,

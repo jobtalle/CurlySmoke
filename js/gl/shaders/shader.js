@@ -1,4 +1,4 @@
-import {gl} from "./gl.js";
+import {gl} from "../gl.js";
 
 export class Shader {
     static #PREFIX = "#version 300 es\nprecision highp float;\n";
