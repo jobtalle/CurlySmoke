@@ -6,6 +6,7 @@ import {CameraController} from "./cameraController.js";
 import {RenderableGrid} from "./renderable/renderableGrid.js";
 import {Vector2} from "./math/vector2.js";
 import {RenderableSmoke} from "./renderable/renderableSmoke.js";
+import {SmokeParticles} from "./smokeParticles.js";
 
 export class Smoke {
     static #CLEAR_COLOR = new Color("#74a7b6");
@@ -14,11 +15,15 @@ export class Smoke {
     #cameraController = new CameraController(this.#camera);
     #grid = new RenderableGrid();
     #smoke = new RenderableSmoke();
+    #smokeParticles = new SmokeParticles(this.#smoke);
 
     constructor() {
         this.#addListeners();
 
         this.#camera.updateProjection(glCanvas.width / glCanvas.height);
+
+        UniformBlocks.GLOBALS.setViewport(glCanvas.width, glCanvas.height);
+        UniformBlocks.GLOBALS.setProjection(this.#camera.projection);
 
         gl.clearColor(Smoke.#CLEAR_COLOR.r, Smoke.#CLEAR_COLOR.g, Smoke.#CLEAR_COLOR.b, 1);
         gl.disable(gl.DEPTH_TEST);
@@ -53,7 +58,7 @@ export class Smoke {
     }
 
     update() {
-
+        this.#smokeParticles.update();
     }
 
     render(time) {
@@ -63,6 +68,8 @@ export class Smoke {
             UniformBlocks.GLOBALS.setVP(this.#camera.vp);
             UniformBlocks.GLOBALS.upload();
         }
+
+        this.#smokeParticles.stream(time);
 
         gl.clear(gl.COLOR_BUFFER_BIT);
 

@@ -7,6 +7,7 @@ export class ShaderSmoke extends Shader {
         
         void main() {
             gl_Position = vp * vec4(position, 1.);
+            gl_PointSize = viewport.y * .2 * projection[1][1] / gl_Position.w;
         }
         `;
 

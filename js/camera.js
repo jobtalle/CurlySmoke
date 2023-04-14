@@ -5,8 +5,9 @@ export class Camera {
     static #Z_NEAR = .01;
     static #Z_FAR = 50;
 
-    #projection = new Matrix4();
     #shift;
+
+    projection = new Matrix4();
     view = new Matrix4();
     vp = new Matrix4();
 
@@ -31,7 +32,7 @@ export class Camera {
      * @param {number} aspect The aspect ratio
      */
     updateProjection(aspect) {
-        this.#projection.perspective(
+        this.projection.perspective(
             Math.PI * .3,
             aspect,
             Camera.#Z_NEAR,
@@ -42,7 +43,7 @@ export class Camera {
      * Update the MVP matrix
      */
     updateVP() {
-        this.vp.set(this.#projection);
+        this.vp.set(this.projection);
         this.vp.shift(this.#shift.x, this.#shift.y);
         this.vp.multiply(this.view);
     }

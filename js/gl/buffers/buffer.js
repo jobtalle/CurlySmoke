@@ -20,8 +20,8 @@ export class Buffer {
             gl.bufferData(type, initial, usage);
     }
 
-    upload(data) {
+    upload(data, bytes = data.byteLength) {
         gl.bindBuffer(this.type, this.buffer);
-        gl.bufferSubData(this.type, 0, data);
+        gl.bufferSubData(this.type, 0, new DataView(data.buffer), 0, bytes);
     }
 }

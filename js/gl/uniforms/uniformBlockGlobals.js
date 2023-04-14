@@ -6,21 +6,23 @@ export class UniformBlockGlobals extends UniformBlock {
 
     #floats;
 
-    /**
-     * Construct the global variables
-     */
     constructor() {
-        super(16 << 2, UniformBlockGlobals.BINDING);
+        super(34 << 2, UniformBlockGlobals.BINDING);
 
         this.#floats = new Float32Array(this.bytes);
     }
 
-    /**
-     * Set the VP matrix
-     * @param {Matrix4} vp The VP matrix
-     */
     setVP(vp) {
         this.#floats.set(vp.buffer);
+    }
+
+    setProjection(projection) {
+        this.#floats.set(projection.buffer, 16);
+    }
+
+    setViewport(width, height) {
+        this.#floats[32] = width;
+        this.#floats[33] = height;
     }
 }
 
@@ -29,5 +31,7 @@ export class UniformBlockGlobals extends UniformBlock {
 export const glslGlobals = `
 layout(std140) uniform ${UniformBlockGlobals.NAME} {
     mat4 vp;
+    mat4 projection;
+    vec2 viewport;
 };
 `;
