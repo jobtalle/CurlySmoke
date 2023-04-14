@@ -25,7 +25,8 @@ export class RenderableGrid extends Renderable {
 
         this.#vertices.upload(new Float32Array(points));
 
-        gl.bindVertexArray(this.vao);
+        this.bind();
+
         gl.bindBuffer(gl.ARRAY_BUFFER, this.#vertices.buffer);
         gl.enableVertexAttribArray(0);
         gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 12, 0);

@@ -5,6 +5,7 @@ import {UniformBlocks} from "./gl/uniforms/uniformBlocks.js";
 import {CameraController} from "./cameraController.js";
 import {RenderableGrid} from "./renderable/renderableGrid.js";
 import {Vector2} from "./math/vector2.js";
+import {RenderableSmoke} from "./renderable/renderableSmoke.js";
 
 export class Smoke {
     static #CLEAR_COLOR = new Color("#74a7b6");
@@ -12,6 +13,7 @@ export class Smoke {
     #camera = new Camera(new Vector2(0, .5));
     #cameraController = new CameraController(this.#camera);
     #grid = new RenderableGrid();
+    #smoke = new RenderableSmoke();
 
     constructor() {
         this.#addListeners();
@@ -65,5 +67,6 @@ export class Smoke {
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         this.#grid.render();
+        this.#smoke.render();
     }
 }
